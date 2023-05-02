@@ -15,6 +15,9 @@ class AdminMenuActivity : AppCompatActivity(), UserAdapter.UserItemClickListener
     private lateinit var binding: AdminMenuActivityBinding
     private lateinit var databaseHelper: DatabaseHelper
     private lateinit var selectedUser: User
+    private lateinit var userList: MutableList<User>
+    private lateinit var userAdapter: UserAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,8 +72,21 @@ class AdminMenuActivity : AppCompatActivity(), UserAdapter.UserItemClickListener
 
 
         binding.btnEditUser.setOnClickListener {
-            // Code for editing user functionality
+            if (::selectedUser.isInitialized) {
+                val dialogEditUser = DialogEditUser(this, selectedUser) { updatedUser ->
+                    // Update the user list in the adapter and refresh the RecyclerView
+                    val updatedUserList = userList.map {
+                        if (it.id == selectedUser.id) updatedUser else it
+                    }.toMutableList()
+                    userAdapter.updateUserList(updatedUserList)
+                }
+                dialogEditUser.show()
+            } else {
+                Toast.makeText(this, "Please select a user to edit", Toast.LENGTH_SHORT).show()
+            }
         }
+
+
 
         binding.btnViewActivityLogs.setOnClickListener {
             // Code for viewing activity logs functionality
@@ -81,10 +97,13 @@ class AdminMenuActivity : AppCompatActivity(), UserAdapter.UserItemClickListener
             startActivity(intent)
         }
     }
-
+    private fun updateUserList() {
+        val updatedUserList = databaseHelper.getAllUsers().toMutableList()
+        userAdapter.updateUserList(updatedUserList)
+    }
     private fun setupRecyclerView() {
-        val userList = databaseHelper.getAllUsers()
-        val userAdapter = UserAdapter(userList, this)
+        userList = databaseHelper.getAllUsers().toMutableList()
+        userAdapter = UserAdapter(userList, this)
         binding.rvUserList.adapter = userAdapter
         binding.rvUserList.layoutManager = LinearLayoutManager(this)
         binding.rvUserList.setHasFixedSize(true)
@@ -93,4 +112,5 @@ class AdminMenuActivity : AppCompatActivity(), UserAdapter.UserItemClickListener
     override fun onUserItemClick(user: User) {
         selectedUser = user
     }
+
 }

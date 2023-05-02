@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 class UserAdapter(
-    private val userList: List<User>,
+    private val userList: MutableList<User>,
     private val userItemClickListener: UserItemClickListener
 ) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
@@ -44,4 +44,13 @@ class UserAdapter(
     override fun getItemCount(): Int {
         return userList.size
     }
+    fun updateUserList(newList: List<User>) {
+        userList.apply {
+            clear()
+            addAll(newList)
+        }
+        notifyDataSetChanged()
+    }
+
+
 }

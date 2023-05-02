@@ -44,6 +44,18 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         db.close()
         return result != -1L
     }
+    fun updateUser(user: User): Int {
+        val db = this.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put(KEY_NAME, user.name)
+        contentValues.put(KEY_EMAIL, user.email)
+        contentValues.put(KEY_PASSWORD, user.password)
+
+        val result = db.update(TABLE_NAME, contentValues, "$KEY_ID = ?", arrayOf(user.id.toString()))
+        db.close()
+        return result
+    }
+
 
     fun getUser(email: String): User? {
         val db = this.readableDatabase
