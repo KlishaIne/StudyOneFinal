@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Podejscie69</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="assignments">Assignments</string>
+    <string name="notes">Notes</string>
+    <string name="reminders">Reminders</string>
+    <string name="schedule">Schedule</string>
+    <string name="tasks">Tasks</string>
+    <string name="logout">Logout</string>
+    <string name="set_date">Set Date</string>
+    <string name="set_time">Set Time</string>
+    <string name="save_reminder">Save Reminder</string>
+    <string name="reminder_title">Reminder Title</string>
+    <string name="time_format">%02d:%02d</string>
+    <string name="add_reminder">Add Reminder</string>
+
+</resources>
