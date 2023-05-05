@@ -3,20 +3,24 @@ package com.example.podejscie69
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import java.util.Date
 
 
-class ReminderAdapter : ListAdapter<Reminder, ReminderAdapter.ReminderViewHolder>(ReminderDiffCallback()) {
+class ReminderAdapter(
+    private val reminderStorage: ReminderStorage,
+    private val onDeleteClickListener: (Reminder) -> Unit
+) : ListAdapter<Reminder, ReminderAdapter.ReminderViewHolder>(ReminderDiffCallback()) {
 
     class ReminderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val reminderTitle: TextView = itemView.findViewById(R.id.reminder_title)
         val reminderDateTime: TextView = itemView.findViewById(R.id.reminder_date_time)
         val reminderSwitch: Switch = itemView.findViewById(R.id.reminder_switch)
+        val reminderDeleteButton: ImageButton = itemView.findViewById(R.id.reminder_delete_button)
 
     }
 
@@ -27,9 +31,20 @@ class ReminderAdapter : ListAdapter<Reminder, ReminderAdapter.ReminderViewHolder
 
     override fun onBindViewHolder(holder: ReminderViewHolder, position: Int) {
         val currentItem = getItem(position)
+        holder.reminderDeleteButton.setOnClickListener {
+            onDeleteClickListener(currentItem)
+        }
         holder.reminderTitle.text = currentItem.title
         holder.reminderDateTime.text = currentItem.dateTimeFormatted
-        holder.reminderSwitch.isChecked = currentItem.isEnabled
+        holder.reminderSwitch.setOnCheckedChangeListener { _, isChecked ->
+            getItem(position).isEnabled = isChecked
+            if (isChecked) {
+                reminderStorage.scheduleReminder(holder.itemView.context, currentItem)
+            } else {
+                reminderStorage.cancelReminder(holder.itemView.context, currentItem)
+            }
+        }
+
     }
 }
 

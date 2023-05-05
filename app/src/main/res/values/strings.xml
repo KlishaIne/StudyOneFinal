@@ -15,5 +15,9 @@
     <string name="reminder_title">Reminder Title</string>
     <string name="time_format">%02d:%02d</string>
     <string name="add_reminder">Add Reminder</string>
+    <string name="notification_channel_name">Reminders</string>
+    <string name="notification_channel_description">Channel for reminder notifications</string>
+    <string name="delete_reminder">Delete Reminder</string>
+
 
 </resources>

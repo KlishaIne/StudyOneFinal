@@ -1,24 +1,49 @@
 package com.example.podejscie69
-
-import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-
+import org.junit.After
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import org.junit.Assert.*
-
-/**
- * Instrumented test, which will execute on an Android device.
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
 @RunWith(AndroidJUnit4::class)
-class ExampleInstrumentedTest {
+class MainActivityEspressoTest {
+
+    @get:Rule
+    var activityRule = ActivityScenarioRule(MainActivity::class.java)
+
+    @Before
+    fun setUp() {
+        Intents.init()
+    }
+
+    @After
+    fun tearDown() {
+        Intents.release()
+    }
+
     @Test
-    fun useAppContext() {
-        // Context of the app under test.
-        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.example.podejscie69", appContext.packageName)
+    fun testLoginButtonClickOpensDashboardActivity() {
+        onView(withId(R.id.bLogin)).perform(click())
+        intended(hasComponent(DashboardActivity::class.java.name))
+    }
+
+    @Test
+    fun testRegisterButtonClickOpensRegisterActivity() {
+        onView(withId(R.id.bRegister)).perform(click())
+        intended(hasComponent(RegisterActivity::class.java.name))
+    }
+
+    @Test
+    fun testAdminButtonClickOpensAdminActivity() {
+        onView(withId(R.id.bAdmin)).perform(click())
+        intended(hasComponent(AdminActivity::class.java.name))
     }
 }

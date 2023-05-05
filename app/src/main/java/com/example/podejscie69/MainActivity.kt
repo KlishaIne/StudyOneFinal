@@ -1,6 +1,10 @@
 package com.example.podejscie69
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -19,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        createNotificationChannel()
         databaseHelper = DatabaseHelper(this)
 
         etEmail = findViewById(R.id.etEmail)
@@ -57,16 +61,18 @@ class MainActivity : AppCompatActivity() {
         return email.isNotEmpty() && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() && password.isNotEmpty()
     }
 
-    private fun loginUser(email: String, password: String) {
-        val user = databaseHelper.getUser(email)
-        if (user != null && user.password == password) {
-            Toast.makeText(this, "Logged in as $email", Toast.LENGTH_SHORT).show()
-
-            // Navigate to the DashboardActivity
-            val intent = Intent(this, DashboardActivity::class.java)
-            startActivity(intent)
-        } else {
-            Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show()
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Reminders"
+            val descriptionText = "Channel for reminders"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(ReminderReceiver.CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
         }
     }
 }
+

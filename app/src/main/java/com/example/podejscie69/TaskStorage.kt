@@ -27,9 +27,6 @@ class TaskStorage(context: Context) {
         }
         return mutableListOf()
     }
-    fun deleteAllTasks() {
-        sharedPreferences.edit().remove(TASKS_KEY).apply()
-    }
 
 
 }

@@ -1,5 +1,4 @@
 package com.example.podejscie69
-
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
@@ -10,6 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.random.Random
 
 class AddReminderActivity : AppCompatActivity() {
     private lateinit var editTextTitle: EditText
@@ -32,42 +32,55 @@ class AddReminderActivity : AppCompatActivity() {
         updateDateTime()
 
         buttonSetDateTime.setOnClickListener {
-            val datePickerDialog = DatePickerDialog(
-                this,
-                { _, year, month, dayOfMonth ->
-                    selectedDateTime.set(Calendar.YEAR, year)
-                    selectedDateTime.set(Calendar.MONTH, month)
-                    selectedDateTime.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
-                    val timePickerDialog = TimePickerDialog(
-                        this,
-                        { _, hourOfDay, minute ->
-                            selectedDateTime.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                            selectedDateTime.set(Calendar.MINUTE, minute)
-                            updateDateTime()
-                        },
-                        selectedDateTime.get(Calendar.HOUR_OF_DAY),
-                        selectedDateTime.get(Calendar.MINUTE),
-                        true
-                    )
-                    timePickerDialog.show()
-                },
-                selectedDateTime.get(Calendar.YEAR),
-                selectedDateTime.get(Calendar.MONTH),
-                selectedDateTime.get(Calendar.DAY_OF_MONTH)
-            )
-            datePickerDialog.show()
+            showDatePickerDialog()
         }
 
         buttonAddReminder.setOnClickListener {
             val reminderTitle = editTextTitle.text.toString().trim()
             if (reminderTitle.isNotEmpty()) {
+                val notificationId = Random.nextInt(1, Int.MAX_VALUE)
+                val newReminder = Reminder(UUID.randomUUID().toString(), reminderTitle, selectedDateTime.time, notificationId)
+
+                val reminderStorage = ReminderStorage(this)
+                reminderStorage.saveReminder(newReminder)
+                reminderStorage.scheduleReminder(this, newReminder)
+
                 val intent = Intent(this, RemindersActivity::class.java)
                 startActivity(intent)
-                val newReminder = Reminder(UUID.randomUUID().toString(), reminderTitle, selectedDateTime.time, true)
-                ReminderStorage(this).saveReminder(newReminder)
             }
         }
+    }
+
+    private fun showDatePickerDialog() {
+        val datePickerDialog = DatePickerDialog(
+            this,
+            { _, year, month, dayOfMonth ->
+                selectedDateTime.set(Calendar.YEAR, year)
+                selectedDateTime.set(Calendar.MONTH, month)
+                selectedDateTime.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                showTimePickerDialog()
+            },
+            selectedDateTime.get(Calendar.YEAR),
+            selectedDateTime.get(Calendar.MONTH),
+            selectedDateTime.get(Calendar.DAY_OF_MONTH)
+        )
+        datePickerDialog.show()
+    }
+
+    private fun showTimePickerDialog() {
+        val timePickerDialog = TimePickerDialog(
+            this,
+            { _, hourOfDay, minute ->
+                selectedDateTime.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                selectedDateTime.set(Calendar.MINUTE, minute)
+                updateDateTime()
+            },
+            selectedDateTime.get(Calendar.HOUR_OF_DAY),
+            selectedDateTime.get(Calendar.MINUTE),
+            true
+        )
+        timePickerDialog.show()
     }
 
     private fun updateDateTime() {
